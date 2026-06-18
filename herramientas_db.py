@@ -165,3 +165,49 @@ def modificar_empleado():
     finally:
         if 'cursor' in locals(): cursor.close()
         if 'conexion' in locals(): conexion.close()
+
+
+def obtener_lista_clientes_api():
+    try:
+        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
+        cursor = conexion.cursor()
+
+        cursor.execute("SELECT id_cliente, nombre, email FROM clientes ORDER BY id_cliente")
+        datos = cursor.fetchall()
+
+        # Transformamos las tuplas raras de Oracle en una lista de diccionarios limpios
+        lista_clientes = []
+        for fila in datos:
+            lista_clientes.append({
+                "id_cliente": fila[0],
+                "nombre": fila[1],
+                "email": fila[2]
+            })
+
+        return lista_clientes  # ¡IMPORTANTE! Devolvemos los datos, no los imprimimos
+
+    except oracledb.DatabaseError as e:
+        return {"error": "No se pudo conectar a la base de datos"}
+    finally:
+        if 'cursor' in locals(): cursor.close()
+        if 'conexion' in locals(): conexion.close()
+
+
+def crear_cliente_api(id_cli, nombre_cli, email_cli):
+    try:
+        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
+        cursor = conexion.cursor()
+
+        sql = "INSERT INTO clientes (id_cliente, nombre, email) VALUES (:1, :2, :3)"
+        cursor.execute(sql, [id_cli, nombre_cli, email_cli])
+        conexion.commit()
+
+        return True  # Indicamos que todo ha ido perfecto
+
+    except oracledb.DatabaseError as e:
+        # Si falla (ej. el ID ya existe), lo devolvemos para que la API se entere
+        return False
+
+    finally:
+        if 'cursor' in locals(): cursor.close()
+        if 'conexion' in locals(): conexion.close()
