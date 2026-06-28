@@ -1,7 +1,7 @@
 import oracledb
 import os
 from dotenv import load_dotenv
-from tabulate import tabulate
+
 
 # 1. Cargamos el archivo .env una sola vez al arrancar el programa
 load_dotenv()
