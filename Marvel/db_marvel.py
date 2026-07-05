@@ -2,36 +2,28 @@ import oracledb
 import os
 from dotenv import load_dotenv
 
-
-# 1. Cargamos el archivo .env una sola vez al arrancar el programa
+# Carga de variables de entorno al iniciar el modulo
 load_dotenv()
 
-# 2. Guardamos las credenciales en variables para usarlas en todo el archivo
 USUARIO = os.getenv("DB_USUARIO")
 CONTRASENA = os.getenv("DB_CONTRASENA")
 DSN = os.getenv("DB_HOST")
 
 
 def obtener_personajes_api():
-    """
-    Se conecta a Oracle y devuelve una lista de personajes.
-    Por defecto, devuelve solo los 20 primeros para no saturar la pantalla.
-    """
+    """Ejecuta una consulta SELECT y devuelve una lista de diccionarios con los personajes."""
     try:
         conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
         cursor = conexion.cursor()
 
-        # Usamos FETCH FIRST para limitar cuántos traemos
         sql = """
             SELECT id_personaje, alias_heroe, nombre_real, bando, nivel_poder 
             FROM marvel_personajes 
         """
-
-        # Le pasamos el límite como parámetro de seguridad
         cursor.execute(sql)
         datos = cursor.fetchall()
 
-        # Transformamos las tuplas raras de Oracle en diccionarios bonitos de Python
+        # Mapeo de los resultados de Oracle (tuplas) a diccionarios de Python
         lista_personajes = []
         for fila in datos:
             lista_personajes.append({
@@ -45,20 +37,25 @@ def obtener_personajes_api():
         return lista_personajes
 
     except oracledb.DatabaseError as e:
-        print(f"Error en Oracle: {e}")
-        return []  # Devolvemos una lista vacía si algo falla
+        print(f"[ERROR] Fallo en la base de datos: {e}")
+        return []
+
     finally:
+        # Aseguramos el cierre de recursos incluso si hay una excepcion
         if 'cursor' in locals(): cursor.close()
         if 'conexion' in locals(): conexion.close()
 
+
 def crear_personaje_api(id_personaje, alias_heroe, nombre_real, bando, nivel_poder):
+    """Inserta un nuevo registro. Retorna True si tiene exito."""
     try:
-        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn= DSN)
+        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
         cursor = conexion.cursor()
 
+        # Uso de bind variables para prevenir inyeccion SQL
         sql = """
             INSERT INTO marvel_personajes(id_personaje, alias_heroe, nombre_real, bando, nivel_poder)
-            VALUES (:1, :2 , :3 , :4, :5)
+            VALUES (:1, :2, :3, :4, :5)
         """
         cursor.execute(sql, [id_personaje, alias_heroe, nombre_real, bando, nivel_poder])
         conexion.commit()
@@ -66,32 +63,34 @@ def crear_personaje_api(id_personaje, alias_heroe, nombre_real, bando, nivel_pod
         return True
 
     except oracledb.DatabaseError as e:
-        print(f"Error al crear personaje en Oracle: {e}")
+        print(f"[ERROR] No se pudo crear el personaje: {e}")
         return False
 
     finally:
         if 'cursor' in locals(): cursor.close()
         if 'conexion' in locals(): conexion.close()
 
+
 def borrar_personaje_api(id_personaje):
+    """Elimina un registro por ID. Retorna True si se elimino algo."""
     try:
-        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn= DSN)
+        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
         cursor = conexion.cursor()
 
-        sql = """
-            DELETE FROM marvel_personajes WHERE id_personaje = :1
-        """
+        sql = "DELETE FROM marvel_personajes WHERE id_personaje = :1"
         cursor.execute(sql, [id_personaje])
 
+        # rowcount nos indica cuantas filas han sido afectadas por el DELETE
         if cursor.rowcount == 0:
             return False
+
         conexion.commit()
         return True
 
     except oracledb.DatabaseError as e:
-        print(f"Error al borrar personaje en Oracle: {e}")
+        print(f"[ERROR] Fallo al intentar borrar: {e}")
         return False
 
     finally:
         if 'cursor' in locals(): cursor.close()
-        if 'conexion' in locals():conexion.close()
+        if 'conexion' in locals(): conexion.close()

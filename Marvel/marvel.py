@@ -1,177 +1,76 @@
-
-import os
 import sys
-import oracledb
-from dotenv import load_dotenv
-
-# 1. Cargamos el archivo .env una sola vez al arrancar el programa
-load_dotenv()
-
-# 2. Guardamos las credenciales en variables para usarlas en todo el archivo
-USUARIO = os.getenv("DB_USUARIO")
-CONTRASENA = os.getenv("DB_CONTRASENA")
-DSN = os.getenv("DB_HOST")
-
-
-# --- FUNCIONES DE BASE DE DATOS ---
-
-def obtener_personajes_api():
-    """
-    Se conecta a Oracle y devuelve una lista de personajes.
-    """
-    try:
-        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
-        cursor = conexion.cursor()
-
-        sql = """
-            SELECT id_personaje, alias_heroe, nombre_real, bando, nivel_poder 
-            FROM marvel_personajes 
-        """
-        cursor.execute(sql)
-        datos = cursor.fetchall()
-
-        # Transformamos las tuplas raras de Oracle en diccionarios bonitos de Python
-        lista_personajes = []
-        for fila in datos:
-            lista_personajes.append({
-                "id_personaje": fila[0],
-                "alias_heroe": fila[1],
-                "nombre_real": fila[2],
-                "bando": fila[3],
-                "nivel_poder": fila[4]
-            })
-
-        return lista_personajes
-
-    except oracledb.DatabaseError as e:
-        print(f"Error en Oracle: {e}")
-        return []
-    finally:
-        if 'cursor' in locals(): cursor.close()
-        if 'conexion' in locals(): conexion.close()
-
-
-def crear_personaje_api(id_personaje, alias_heroe, nombre_real, bando, nivel_poder):
-    try:
-        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
-        cursor = conexion.cursor()
-
-        sql = """
-            INSERT INTO marvel_personajes(id_personaje, alias_heroe, nombre_real, bando, nivel_poder)
-            VALUES (:1, :2 , :3 , :4, :5)
-        """
-        cursor.execute(sql, [id_personaje, alias_heroe, nombre_real, bando, nivel_poder])
-        conexion.commit()
-
-        return True
-
-    except oracledb.DatabaseError as e:
-        print(f"Error al crear personaje en Oracle: {e}")
-        return False
-
-    finally:
-        if 'cursor' in locals(): cursor.close()
-        if 'conexion' in locals(): conexion.close()
-
-
-def borrar_personaje_api(id_personaje):
-    try:
-        conexion = oracledb.connect(user=USUARIO, password=CONTRASENA, dsn=DSN)
-        cursor = conexion.cursor()
-
-        sql = """
-            DELETE FROM marvel_personajes WHERE id_personaje = :1
-        """
-        cursor.execute(sql, [id_personaje])
-
-        if cursor.rowcount == 0:
-            return False
-        conexion.commit()
-        return True
-
-    except oracledb.DatabaseError as e:
-        print(f"Error al borrar personaje en Oracle: {e}")
-        return False
-
-    finally:
-        if 'cursor' in locals(): cursor.close()
-        if 'conexion' in locals(): conexion.close()
-
-
-# --- MENÚ INTERACTIVO ---
+# Importamos la logica de base de datos desde el modulo db_marvel
+from db_marvel import obtener_personajes_api, crear_personaje_api, borrar_personaje_api
 
 def mostrar_menu():
     print("\n" + "=" * 45)
-    print(" 🦸‍♂️ MARVEL UNIVERSE DATABASE MANAGER 🦸‍♂️ ")
+    print(" GESTOR DE BASE DE DATOS MARVEL ")
     print("=" * 45)
-    print("1. 📋 Ver personajes almacenados")
-    print("2. ➕ Añadir un nuevo personaje")
-    print("3. 🗑️ Borrar un personaje")
-    print("4. 🚪 Salir")
+    print("1. Ver personajes almacenados")
+    print("2. Añadir un nuevo personaje")
+    print("3. Borrar un personaje")
+    print("4. Salir")
     print("=" * 45)
-
 
 def main():
+    # Bucle principal de la aplicacion
     while True:
         mostrar_menu()
 
         try:
-            opcion = int(input("Elige una opción (1-4): "))
+            opcion = int(input("Elige una opcion (1-4): "))
 
             match opcion:
                 case 1:
-                    print("\n[INFO] Consultando la base de datos...")
+                    print("\n[INFO] Consultando registros...")
                     personajes = obtener_personajes_api()
 
                     if not personajes:
-                        print("📭 No hay personajes en la base de datos.")
+                        print("La base de datos esta vacia.")
                     else:
-                        print("\n--- 📋 LISTA DE PERSONAJES MARVEL ---")
+                        print("\n--- LISTADO DE PERSONAJES ---")
                         for p in personajes:
-                            # Como tu función devuelve diccionarios, accedemos a los datos con las claves
-                            print(
-                                f"ID: {p['id_personaje']} | Alias: {p['alias_heroe']} | Nombre: {p['nombre_real']} | Bando: {p['bando']} | Poder: {p['nivel_poder']}")
+                            print(f"ID: {p['id_personaje']} | Alias: {p['alias_heroe']} | Nombre: {p['nombre_real']} | Bando: {p['bando']} | Poder: {p['nivel_poder']}")
 
                 case 2:
-                    print("\n--- ➕ AÑADIR NUEVO PERSONAJE ---")
+                    print("\n--- ALTA DE PERSONAJE ---")
                     try:
-                        id_per = int(input("ID del personaje (número único): "))
-                        alias = input("Alias del héroe/villano: ")
+                        id_per = int(input("ID (numero unico): "))
+                        alias = input("Alias: ")
                         nombre = input("Nombre real: ")
-                        bando = input("Bando o afiliación: ")
+                        bando = input("Bando: ")
                         poder = int(input("Nivel de poder (1-100): "))
 
                         exito = crear_personaje_api(id_per, alias, nombre, bando, poder)
                         if exito:
-                            print(f"\n✅ ¡{alias} añadido correctamente a la base de datos!")
+                            print(f"\n[OK] Personaje {alias} registrado correctamente.")
                         else:
-                            print("\n❌ Hubo un problema al añadir el personaje. Verifica que el ID no exista ya.")
+                            print("\n[ERROR] No se pudo registrar. Verifica que el ID no exista previamente.")
                     except ValueError:
-                        print("\n⚠️ Error: El ID y el nivel de poder deben ser números enteros.")
+                        print("\n[AVISO] Los campos ID y Nivel de poder requieren valores numericos.")
 
                 case 3:
-                    print("\n--- 🗑️ BORRAR PERSONAJE ---")
+                    print("\n--- BAJA DE PERSONAJE ---")
                     try:
-                        id_borrar = int(input("Introduce el ID del personaje a borrar: "))
+                        id_borrar = int(input("Introduce el ID del personaje a eliminar: "))
                         exito = borrar_personaje_api(id_borrar)
 
                         if exito:
-                            print(f"\n✅ Personaje con ID {id_borrar} eliminado correctamente.")
+                            print(f"\n[OK] Registro con ID {id_borrar} eliminado.")
                         else:
-                            print(f"\n⚠️ No se ha podido borrar. ¿Seguro que el ID {id_borrar} existe?")
+                            print(f"\n[AVISO] No se encontro ningun registro con el ID {id_borrar}.")
                     except ValueError:
-                        print("\n⚠️ Error: El ID debe ser un número entero.")
+                        print("\n[AVISO] El ID introducido no tiene un formato valido.")
 
                 case 4:
-                    print("\nCerrando el sistema. ¡Hasta pronto! 🦸‍♂️")
+                    print("\nCerrando conexion. Fin del programa.")
                     sys.exit()
 
                 case _:
-                    print("\n⚠️ Error: Por favor, introduce un número del 1 al 4.")
+                    print("\n[AVISO] Opcion fuera de rango. Seleccione entre 1 y 4.")
 
         except ValueError:
-            print("\n⚠️ Error: Entrada no válida. Debes introducir un número entero.")
-
+            print("\n[AVISO] Entrada no reconocida. Debe introducir un numero.")
 
 if __name__ == "__main__":
     main()
