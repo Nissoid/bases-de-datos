@@ -1,66 +1,226 @@
-# 🦸‍♂️ Marvel Universe Database Manager
+# 🦸‍♂️ Marvel Universe & ERP API System
 
 ## 📝 Descripción
 
-Este proyecto es un sistema backend desarrollado en **Python** diseñado para gestionar y almacenar información sobre los personajes del universo Marvel. Interactúa con una base de datos **Oracle** y ofrece un menú interactivo por consola (CLI) para realizar operaciones CRUD (Crear, Leer, Eliminar). Además, cuenta con scripts automatizados para el despliegue inicial de la estructura de datos y la inserción masiva de registros.
+Este proyecto es un sistema **Full-Stack** desarrollado para gestionar y visualizar información sobre el universo Marvel (junto con un módulo ERP corporativo).
+
+El núcleo del sistema es una **API REST construida con FastAPI** que interactúa con una base de datos **Oracle**.
+
+Los usuarios pueden consumir y manipular los datos de dos maneras:
+
+* A través de un **buscador web interactivo**.
+* Mediante un **cliente CLI por consola** que realiza peticiones HTTP.
+
+---
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Lenguaje:** Python 3.10+ (Uso de `match-case` para la lógica del menú)
-* **Base de Datos:** Oracle Database (SQL)
-* **Librerías principales:** `oracledb` (driver de conexión) y `python-dotenv` (gestión de variables de entorno).
+### Backend & API
 
-## 🚀 Características Principales
+* **Python 3.10+**
+* **FastAPI**
+* **Uvicorn** (Servidor ASGI)
+* **Pydantic** (Validación de datos)
+* **requests** (Cliente HTTP)
 
-* **Arquitectura Modular:** Código dividido lógicamente entre la interfaz de usuario, las operaciones de base de datos, la configuración inicial y la carga de datos masiva.
-* **Menú Interactivo CLI:** Interfaz por consola intuitiva que permite listar, añadir y eliminar personajes del universo Marvel.
-* **Inserción Masiva (Seed):** Implementación de un script automatizado usando `executemany` para poblar la base de datos con 100 personajes predefinidos con estadísticas calculadas.
-* **Gestión Segura de Credenciales:** Implementación de un archivo `.env` con validaciones de seguridad integradas para proteger los datos de acceso a Oracle.
-* **Consultas Seguras:** Uso de variables vinculadas (*bind variables*) en las sentencias SQL y mapeo mediante diccionarios en Python para evitar vulnerabilidades.
+### Base de datos
+
+* **Oracle Database**
+* **SQL**
+* **oracledb** (driver de conexión)
+* **python-dotenv** (gestión de variables de entorno)
+
+### Frontend
+
+* **HTML5**
+* **CSS3**
+* **JavaScript (Vanilla)**
+* **Fetch API** para el consumo asíncrono de la API
+
+---
+
+## 🚀 Características principales
+
+### Arquitectura Desacoplada (Frontend/Backend)
+
+Separación total de responsabilidades.
+
+* El backend sirve datos a través de **endpoints JSON**.
+* El frontend se encarga exclusivamente de la **presentación visual**.
+
+### API RESTful Documentada
+
+Servidor robusto y rápido gracias a **FastAPI**, que incluye documentación automática e interactiva mediante **Swagger UI** para probar las rutas:
+
+* `GET`
+* `POST`
+* `PUT`
+* `DELETE`
+
+### Aplicación Web Interactiva
+
+Buscador en el navegador que consume la **API de Marvel en tiempo real**.
+
+Incluye:
+
+* Barra de búsqueda por nombre.
+* Filtros por bando:
+
+  * Héroe
+  * Villano
+  * Anti-héroe
+* Opciones de ordenación dinámica:
+
+  * Alfabética
+  * Por nivel de poder
+
+### Cliente CLI Evolucionado
+
+El menú por consola original ha sido refactorizado.
+
+Ahora funciona como un **cliente externo** que interactúa con la API mediante peticiones HTTP, mostrando:
+
+* Códigos de estado.
+* Encabezados de red.
+
+### Inserción Masiva y Automatización
+
+Scripts especializados para:
+
+* Despliegue de tablas (DDL).
+* Poblado de datos (Seed).
+* Inserción mediante `executemany`.
+
+Preparando el entorno de pruebas rápidamente.
+
+### Gestión Segura y Consultas Parametrizadas
+
+* Archivo `.env` ignorado en el repositorio para proteger credenciales.
+* Uso exclusivo de variables vinculadas (**bind variables**, `:1`) para prevenir inyecciones SQL.
+
+---
 
 ## 🏗️ Estructura del Proyecto
 
-El repositorio consta de cuatro archivos principales, cada uno con una responsabilidad única:
+El repositorio está dividido en dos grandes bloques para separar el cliente visual del servidor:
 
-* `marvel.py`: Punto de entrada de la aplicación. Contiene el bucle principal y el menú interactivo para el usuario.
-* `db_marvel.py`: Módulo que concentra la lógica de negocio y las funciones directas de conexión y operaciones CRUD hacia Oracle.
-* `setup_db.py`: Script de instalación para crear la tabla `marvel_personajes`. Incluye escudos de seguridad antes de ejecutar comandos DDL.
-* `poblar_marvel.py`: Script de inicialización de datos para insertar de golpe 100 personajes en la base de datos y preparar el entorno de pruebas.
+```text
+frontend/
+├── index.html
+├── style.css
+└── script.js
+```
 
-## 📋 Requisitos Previos
+Contiene la interfaz de usuario web y los archivos del buscador interactivo de Marvel.
+
+```text
+backend/
+├── api.py
+├── main.py
+├── marvel/
+│   └── db_marvel.py
+└── erp/
+    └── db_erp.py
+```
+
+### `frontend/`
+
+Contiene la interfaz de usuario web.
+
+* `index.html`
+* `style.css`
+* `script.js`
+
+Archivos del buscador interactivo de Marvel.
+
+### `backend/`
+
+Contiene la lógica del servidor y la base de datos.
+
+#### `api.py`
+
+Punto de entrada principal de la API REST (**FastAPI**).
+
+Enruta las peticiones web hacia la base de datos.
+
+#### `main.py`
+
+Cliente de consola interactivo (**CLI**) que consume los endpoints de la API.
+
+#### `marvel/`
+
+Módulo del multiverso Marvel.
+
+* `db_marvel.py` para lógica CRUD.
+* Scripts de poblado.
+* Scripts de creación de tablas.
+
+#### `erp/`
+
+Módulo corporativo heredado.
+
+* `db_erp.py` para la gestión independiente de clientes y empleados.
+
+---
+
+# 💻 Ejecución en local
 
 Para ejecutar este proyecto en local, necesitarás:
 
-1. Python 3.10 o superior instalado en tu sistema.
-2. Acceso a una instancia de Oracle Database configurada y activa.
+1. **Python 3.10 o superior** instalado en tu sistema.
+2. Acceso a una instancia de **Oracle Database** configurada y activa.
 3. Instalar las dependencias necesarias mediante la consola:
-   ```bash
-   pip install oracledb python-dotenv
-   ```
+
+```bash
+pip install oracledb python-dotenv
+```
+
+---
 
 ## ⚙️ Configuración y Ejecución
 
-1. Descarga o clona este repositorio en tu máquina local.
-2. Crea un archivo llamado **exactamente** `.env` en la misma carpeta que tu código y añade tus credenciales de acceso a Oracle con el siguiente formato:
-   ```env
-   DB_USUARIO=tu_usuario
-   DB_CONTRASENA=tu_contraseña
-   DB_HOST=tu_dsn_o_host
-   ```
-3. **Paso 1 (Instalación):** Ejecuta el script de configuración para crear la tabla en la base de datos:
-   ```bash
-   python setup_db.py
-   ```
-4. **Paso 2 (Opcional - Poblar BD):** Si quieres empezar con 100 personajes ya cargados (como Iron Man, Thanos, Lobezno, etc.), ejecuta:
-   ```bash
-   python poblar_marvel.py
-   ```
-5. **Paso 3 (Ejecución):** Inicia la aplicación principal para abrir el menú interactivo:
-   ```bash
-   python marvel.py
-   ```
+### 1. Descargar o clonar el repositorio
+
+Descarga o clona este repositorio en tu máquina local.
+
+### 2. Configurar las variables de entorno
+
+Crea un archivo llamado **exactamente** `.env` en la misma carpeta que tu código y añade tus credenciales de acceso a Oracle con el siguiente formato:
+
+```env
+DB_USUARIO=tu_usuario
+DB_CONTRASENA=tu_contraseña
+DB_HOST=tu_dsn_o_host
+```
+
+### 3. Paso 1 — Instalación
+
+Ejecuta el script de configuración para crear la tabla en la base de datos:
+
+```bash
+python setup_db.py
+```
+
+### 4. Paso 2 — Poblar la base de datos
+
+**Opcional:** si quieres empezar con **100 personajes** ya cargados, como Iron Man, Thanos, Lobezno, etc., ejecuta:
+
+```bash
+python poblar_marvel.py
+```
+
+### 5. Paso 3 — Ejecución
+
+Inicia la aplicación principal para abrir el menú interactivo:
+
+```bash
+python marvel.py
+```
+
+---
 
 ## 👨‍💻 Autor
 
-**Daniel Avilés Martínez** - Desarrollador de software  
+**Daniel Avilés Martínez** - Desarrollador de software
+
 [GitHub: nissoid](https://github.com/nissoid)
