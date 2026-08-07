@@ -108,7 +108,7 @@ El repositorio está dividido en dos grandes bloques para separar el cliente vis
 frontend/
 ├── index.html
 ├── style.css
-└── script.js
+└── app.js
 ```
 
 Contiene la interfaz de usuario web y los archivos del buscador interactivo de Marvel.
@@ -119,8 +119,9 @@ backend/
 ├── main.py
 ├── marvel/
 │   └── db_marvel.py
-└── erp/
-    └── db_erp.py
+    └── marvel.py
+    └── poblar_marvel.py
+    └── setup_db.py
 ```
 
 ### `frontend/`
@@ -129,7 +130,7 @@ Contiene la interfaz de usuario web.
 
 * `index.html`
 * `style.css`
-* `script.js`
+* `app.js`
 
 Archivos del buscador interactivo de Marvel.
 
