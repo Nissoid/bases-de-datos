@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 # --- IMPORTACIONES MARVEL ---
@@ -6,6 +7,18 @@ from pydantic import BaseModel
 from Marvel.db_marvel import obtener_personajes_api, crear_personaje_api, borrar_personaje_api
 
 app = FastAPI(title="Universo Marvel")
+
+# ==========================================
+# CONFIGURACIÓN DE CORS (PERMITIR CONEXIÓN DESDE FRONTEND)
+# ==========================================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite peticiones desde cualquier origen (Live Server, etc.)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, DELETE, etc.)
+    allow_headers=["*"],
+)
+
 
 # ==========================================
 # MODELOS DE DATOS (Pydantic)

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universo Marvel | Buscador de Personajes</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fuente moderna desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="contenedor">
+        <!-- Cabecera con estilo Marvel -->
+        <header class="header-marvel">
+            <div class="logo-marvel">MARVEL</div>
+            <h1>Buscador de Personajes</h1>
+        </header>
+
+        <!-- Panel de Búsqueda y Filtros -->
+        <section class="card-busqueda">
+            <form id="formulario-busqueda">
+                <div class="grupo-input">
+                    <input type="text" id="buscador" placeholder="Ej: Iron Man, Spider-Man, Thanos..." autocomplete="off">
+                    <button type="submit" class="btn btn-buscar">Buscar</button>
+                    <button type="button" id="btn-limpiar" class="btn btn-limpiar">Limpiar</button>
+                </div>
+
+                <!-- Desplegables de Filtros -->
+                <div class="grupo-filtros">
+                    <div class="filtro-item">
+                        <label for="filtro-bando">Bando:</label>
+                        <select id="filtro-bando" class="select-marvel">
+                            <option value="todos">Todos los bandos</option>
+                            <option value="heroe">Héroes</option>
+                            <option value="villano">Villanos</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-item">
+                        <label for="filtro-orden">Ordenar por:</label>
+                        <select id="filtro-orden" class="select-marvel">
+                            <option value="alias-az">Alias (A - Z)</option>
+                            <option value="alias-za">Alias (Z - A)</option>
+                            <option value="poder-desc">Nivel de Poder (Mayor a Menor)</option>
+                            <option value="poder-asc">Nivel de Poder (Menor a Mayor)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tabla de Resultados -->
+        <section class="card-tabla">
+            <table class="tabla-marvel">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Alias</th>
+                        <th>Nombre Real</th>
+                        <th>Bando</th>
+                        <th>Nivel de Poder</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-tabla">
+                    <tr>
+                        <td colspan="5" class="estado-inicial">Realiza una búsqueda para mostrar los personajes.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

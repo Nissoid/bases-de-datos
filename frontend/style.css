@@ -1,0 +1,226 @@
+:root {
+    --marvel-red: #e62429;
+    --marvel-dark-red: #b31217;
+    --bg-dark: #151515;
+    --card-bg: #202020;
+    --text-white: #ffffff;
+    --text-muted: #aaaaaa;
+    --border-color: #333333;
+    --hero-gold: #f2a900;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* Header con Logo */
+.header-marvel {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-marvel {
+    display: inline-block;
+    background-color: var(--marvel-red);
+    color: #fff;
+    font-weight: 900;
+    font-size: 2.2rem;
+    padding: 2px 14px;
+    letter-spacing: -1px;
+    transform: scaleY(1.2);
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(230, 36, 41, 0.4);
+}
+
+.header-marvel h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+}
+
+/* Card de Búsqueda */
+.card-busqueda {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px;
+}
+
+.grupo-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#buscador {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 1rem;
+    background-color: #111;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-white);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#buscador:focus {
+    border-color: var(--marvel-red);
+}
+
+/* Nuevos Filtros */
+.grupo-filtros {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filtro-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtro-item label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.select-marvel {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    background-color: #111;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-white);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.select-marvel:focus {
+    border-color: var(--marvel-red);
+}
+
+/* Botones */
+.btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-buscar {
+    background-color: var(--marvel-red);
+    color: white;
+}
+
+.btn-buscar:hover {
+    background-color: var(--marvel-dark-red);
+    transform: translateY(-1px);
+}
+
+.btn-limpiar {
+    background-color: #333333;
+    color: #ccc;
+}
+
+.btn-limpiar:hover {
+    background-color: #444444;
+    color: white;
+}
+
+/* Tabla Estilizada */
+.card-tabla {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tabla-marvel {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-marvel th {
+    background-color: #1a1a1a;
+    color: var(--marvel-red);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px;
+    border-bottom: 2px solid var(--marvel-red);
+}
+
+.tabla-marvel td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.tabla-marvel tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.tabla-marvel tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.estado-inicial, .sin-resultados {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 30px !important;
+}
+
+/* Etiquetas de bando */
+.bando-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.bando-heroe {
+    background-color: rgba(0, 150, 255, 0.2);
+    color: #4da6ff;
+    border: 1px solid #0077e6;
+}
+
+.bando-villano {
+    background-color: rgba(230, 36, 41, 0.2);
+    color: #ff5252;
+    border: 1px solid var(--marvel-red);
+}
